@@ -1,14 +1,18 @@
-import os
 import argparse
+import os
+
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--src-root", type=str, default="./data/DAIC-WOZ/data/")
+    parser = argparse.ArgumentParser(
+        description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--src-root", type=str,
+                        default="./data/DAIC-WOZ/data/")
     parser.add_argument("--modality-id", type=str, default="audio_covarep")
-    parser.add_argument("--dest-root", type=str, default="./data/DAIC-WOZ/no-chunked/")
+    parser.add_argument("--dest-root", type=str,
+                        default="./data/DAIC-WOZ/no-chunked/")
     args = parser.parse_args()
 
     featureID = "_COVAREP.csv"
@@ -21,7 +25,11 @@ if __name__ == "__main__":
         df = pd.read_csv(data_path, header=None)
 
         seq = df.astype("float32").to_numpy()
+
+        # 将所有负无穷的值替换为 0
         seq[np.isneginf(seq)] = 0.
+
+        print(f"sessionID: {sessionID}, COVAREP shape: {seq.shape}")
 
         dest_path = os.path.join(dest_dir, sessionID+".npz")
         np.savez_compressed(dest_path, data=seq)
